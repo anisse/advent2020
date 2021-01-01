@@ -37,12 +37,8 @@ fn parse(input: &str) -> Vec<Group> {
 
 impl Group {
     fn uniques(&self) -> Vec<Question> {
-        let mut h = HashSet::new();
-        self.0.iter()
-            .flatten()
-            .map(|x| h.insert(*x))
-            .for_each(drop);
-        //let h = &h;
+        let h = self.0.iter()
+            .fold(self.0[0].clone(), | acc, x| &acc | x);
         h.into_iter().collect()
     }
     fn common(&self) -> Vec<Question> {
