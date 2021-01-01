@@ -7,12 +7,17 @@ struct Group(Vec<PersonYes>);
 
 fn main() {
     //part 1
-    println!("There a total of {} yes answers", parse(include_str!("../input.txt"))
+    println!(
+        "There a total of {} yes answers",
+        parse(include_str!("../input.txt"))
             .iter()
             .map(|x| x.uniques().len())
-            .sum::<usize>());
+            .sum::<usize>()
+    );
     //part 2
-    println!("There are a total of {} common yes answers", parse(include_str!("../input.txt"))
+    println!(
+        "There are a total of {} common yes answers",
+        parse(include_str!("../input.txt"))
             .iter()
             .map(|x| x.common().len())
             .sum::<usize>()
@@ -37,13 +42,11 @@ fn parse(input: &str) -> Vec<Group> {
 
 impl Group {
     fn uniques(&self) -> Vec<Question> {
-        let h = self.0.iter()
-            .fold(self.0[0].clone(), | acc, x| &acc | x);
+        let h = self.0.iter().fold(self.0[0].clone(), |acc, x| &acc | x);
         h.into_iter().collect()
     }
     fn common(&self) -> Vec<Question> {
-        let h = self.0.iter()
-            .fold(self.0[0].clone(), |acc, x| &acc & x);
+        let h = self.0.iter().fold(self.0[0].clone(), |acc, x| &acc & x);
         h.into_iter().collect()
     }
     fn new() -> Group {
