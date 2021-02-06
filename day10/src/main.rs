@@ -30,15 +30,12 @@ fn result_part1(dif: &Differences) -> usize {
 }
 
 // Simple memoized recursion
-fn walk_chains_recur(input: &[u32], cache: &mut [u64]) -> u64 {
+fn walk_chains_recur(input: &[u32], cache: &mut [Option<u64>]) -> u64 {
     if input.is_empty() {
         return 0;
     }
     if input.len() == 1 {
         return 1
-    }
-    if cache[0] > 0 {
-        return cache[0]
     }
     let mut total = 0;
     for i in 1..=3 {
@@ -48,10 +45,18 @@ fn walk_chains_recur(input: &[u32], cache: &mut [u64]) -> u64 {
         if input[i] - input[0] > 3 {
             break
         }
-        total += walk_chains_recur(&input[i..input.len()], &mut cache[i..input.len()])
+        total += walk_chains_memo(&input[i..input.len()], &mut cache[i..input.len()])
     }
-    cache[0] = total;
     total
+}
+
+fn walk_chains_memo(input: &[u32], cache: &mut [Option<u64>]) -> u64 {
+    if let Some(x) = cache[0]  {
+        return x
+    }
+    let res = walk_chains_recur(input, cache);
+    cache[0] = Some(res);
+    res
 }
 
 fn result_part2(input: &[u32]) -> u64 {
@@ -59,7 +64,7 @@ fn result_part2(input: &[u32]) -> u64 {
     sorted.push(0);
     sorted.sort_unstable();
     sorted.push(sorted.last().unwrap() + 3);
-    let mut cache = vec!(0; sorted.len());
+    let mut cache = vec!(None; sorted.len());
     walk_chains_recur(&sorted, &mut cache)
 }
 
