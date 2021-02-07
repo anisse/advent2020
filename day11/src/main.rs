@@ -6,6 +6,7 @@ enum Tile {
 }
 
 type Layout = Vec<Vec<Tile>>;
+type LayoutSlice = [Vec<Tile>];
 
 fn main() {
     let input = parse(include_str!("../input.txt"));
@@ -28,7 +29,7 @@ fn parse(input: &str) -> Layout {
         .collect()
 }
 
-fn result_part1(l: &Layout) -> usize {
+fn result_part1(l: &LayoutSlice) -> usize {
     let mut prev = l.to_owned();
     let mut current;
     loop {
@@ -46,7 +47,7 @@ fn result_part1(l: &Layout) -> usize {
         .count()
 }
 
-fn iteration(l: &Layout) -> Layout {
+fn iteration(l: &LayoutSlice) -> Layout {
     l.iter()
         .enumerate()
         .map(|(i, r)| {
@@ -67,7 +68,7 @@ fn iteration(l: &Layout) -> Layout {
         .collect()
 }
 
-fn count_adjacent_occupied(l: &Layout, i: usize, j: usize) -> u8 {
+fn count_adjacent_occupied(l: &LayoutSlice, i: usize, j: usize) -> u8 {
     let mut count = 0;
     let ilen = l.len();
     let jlen = l[0].len();
@@ -75,12 +76,12 @@ fn count_adjacent_occupied(l: &Layout, i: usize, j: usize) -> u8 {
     let iend = std::cmp::min(i + 1, ilen - 1);
     let jstart = std::cmp::max(0, j as isize - 1) as usize;
     let jend = std::cmp::min(j + 1, jlen - 1);
-    for ii in istart..=iend {
-        for jj in jstart..=jend {
+    for (ii, row) in l.iter().enumerate().take(iend + 1).skip(istart) {
+        for (jj, &tile) in row.iter().enumerate().take(jend + 1).skip(jstart) {
             if i == ii && j == jj {
                 continue; //skip self
             }
-            if l[ii][jj] == Tile::OccupiedSeat {
+            if tile == Tile::OccupiedSeat {
                 count += 1
             }
         }
@@ -88,7 +89,7 @@ fn count_adjacent_occupied(l: &Layout, i: usize, j: usize) -> u8 {
     count
 }
 
-fn cmp(l1: &Layout, l2: &Layout) -> bool {
+fn cmp(l1: &LayoutSlice, l2: &LayoutSlice) -> bool {
     l1.iter()
         .zip(l2)
         .map(|(row1, row2)| row1.iter().zip(row2).map(|(t1, t2)| t1 == t2).all(|t| t))
